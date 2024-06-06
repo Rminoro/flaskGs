@@ -47,7 +47,7 @@ def register():
 
     if len(snapshot) > 0:
         return jsonify({"success": False, "message": "Email já cadastrado."}), 400
-    id = random.randint(100000, 999999)  # Exemplo de geração automática de ID
+    id = random.randint(100000, 999999)  
     new_user_ref = db.collection('usuarios').document(str(id))
     new_user_ref.set({
         'id': id,
@@ -138,8 +138,7 @@ def reportar_localizacao():
     except ValueError as ve:
         return jsonify({"success": False, "message": str(ve)}), 400
     except Exception as e:
-        return jsonify({"success": False, "message": "Erro interno do servidor."}), 500
-    
+        return jsonify({"success": False, "message": "Erro interno do servidor."}), 500  
  #################################################CRUD#############################################
 @app.route('/usuarios', methods=['POST'])
 def criar_usuario():
@@ -221,9 +220,6 @@ def excluir_usuario(email):
     
     return jsonify({"success": True, "message": "Usuário excluído com sucesso."}), 200
 
-
-
-
-
+## para rodar é python app.py
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
