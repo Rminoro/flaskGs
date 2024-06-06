@@ -5,16 +5,15 @@ import random
 
 app = Flask(__name__)
 
-# Inicialização do Firebase
 cred = credentials.Certificate('./mobilegs-e7127-firebase-adminsdk-bfgiy-bf191a87d5.json')
 initialize_app(cred)
 db = firestore.client()
 
-# Configurações do email
+# Configs do email 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'ntjntjntjntj1@gmail.com'  # Coloque seu email do Gmail
-app.config['MAIL_PASSWORD'] = 'vpti ctyk nbha lazw'  # Coloque a senha do seu email do Gmail
+app.config['MAIL_USERNAME'] = 'ntjntjntjntj1@gmail.com'  
+app.config['MAIL_PASSWORD'] = 'vpti ctyk nbha lazw'  
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -59,7 +58,6 @@ def register():
 
     return jsonify({"success": True, "message": "Usuário registrado com sucesso.", "id": id}), 200
 
-# Rota para recuperar a senha
 @app.route('/recuperar_senha', methods=['POST'])
 def recuperar_senha():
     data = request.get_json()
@@ -93,12 +91,11 @@ def recuperar_senha():
 
 @app.route('/redefinir_senha', methods=['POST'])
 def redefinir_senha():
-    # Receba os dados do formulário (email, token e nova senha)
+
     email = request.json.get('email')
     token = request.json.get('token')
     nova_senha = request.json.get('nova_senha')
 
-    # Verifique se o email fornecido corresponde a um usuário
     users_ref = db.collection('usuarios')
     query = users_ref.where('email', '==', email)
     snapshot = query.get()
@@ -106,11 +103,9 @@ def redefinir_senha():
     if len(snapshot) == 0:
         return jsonify({"success": False, "message": "Email não encontrado."}), 404
 
-    # Verificar se o token recebido é válido para o usuário
     for doc in snapshot:
         user_data = doc.to_dict()
         if user_data.get('token_recuperacao') == token:
-            # Atualizar a senha do usuário no Firestore
             doc.reference.update({"senha": nova_senha})
             print('Senha redefinida com sucesso para o usuário com email:', email)
             return jsonify({"success": True, "message": "Senha redefinida com sucesso."}), 200
